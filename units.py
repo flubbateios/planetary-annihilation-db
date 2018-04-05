@@ -162,19 +162,12 @@ class VersionDb:
                     unit.builds.add(other)
                     other.built_by.add(unit)
 
-        # find a reference commander
-        commanders = []
-        for unit in self.units.values():
-            base = unit.base
-            while base:
-                if base.safename == 'base_commander':
-                    commanders.append(unit)
-                    break
-                else:
-                    base = base.base
+        # find all commanders
+        commanders = [u for u in self.units.values()
+                      if 'Commander' in u.unit_types]
         commanders.sort(key=lambda x: x.name)
 
-        # Mark all the other commanders as 'variants'
+        # Mark all but the first as 'variants'
         for commander in commanders[1:]:
             commander.variant = True
 
@@ -575,7 +568,14 @@ class Weapon(Tool):
     energy_rate = 0
     metal_per_shot = 0
     energy_per_shot = 0
-    ammo_demand = 0
+
+    ammo_source = None
+    ammo_demand = 0 # rate at which stored ammo recharges
+    ammo_per_shot = 0
+    ammo_capacity = 0
+    ammo_drain_time = 0
+    ammo_recharge_time = 0
+    ammo_shots_to_drain = 0
 
     yaw_range = 0
     yaw_rate = 0
@@ -611,41 +611,61 @@ class Weapon(Tool):
         if 'max_range' in self.raw:
             self.max_range = self.raw.pop('max_range')
 
-        ammo_source = self.raw.pop('ammo_source', None)
-        if ammo_source:
+        if 'ammo_source' in self.raw:
+            self.ammo_source = self.raw.pop('ammo_source')
+            # Don't inherit these values
+            self.energy_rate = 0
+            self.energy_per_shot = 0
+            self.metal_rate = 0
+            self.metal_per_shot = 0
+
+        if self.ammo_source:
             if 'ammo_demand' in self.raw:
                 self.ammo_demand = self.raw.pop('ammo_demand')
-            ammo_per_shot = self.raw.pop('ammo_per_shot', 0)
-            rate = min(self.ammo_demand, round(ammo_per_shot * self.rof, 2))
-            if ammo_source == 'energy':
-                self.energy_rate = - rate
-                self.energy_per_shot = ammo_per_shot
-            elif ammo_source == 'metal':
-                self.metal_rate = - rate
-                self.metal_per_shot = ammo_per_shot
-            elif ammo_source == 'infinite':
-                self.energy_rate = 0
-                self.energy_per_shot = 0
-                self.metal_rate = 0
-                self.metal_per_shot = 0
-            elif ammo_source == 'factory':
-                self.energy_rate = 0
-                self.energy_per_shot = 0
-                self.metal_rate = 0
-                self.metal_per_shot = 0
-            elif ammo_source == 'time':
-                self.energy_rate = 0
-                self.energy_per_shot = 0
-                self.metal_rate = 0
+                self.ammo_capacity = self.raw.pop('ammo_capacity')
+            if 'ammo_per_shot' in self.raw:
+                self.ammo_per_shot = self.raw.pop('ammo_per_shot')
+            if self.ammo_source == 'time':
+                self.ammo_demand = 1
+
+            if self.ammo_demand:
+                self.ammo_recharge_time = self.ammo_capacity / self.ammo_demand
             else:
-                print('Unhandled ammo source {!r} for {}'.format(ammo_source, resource_name))
+                self.ammo_recharge_time = 0
+
+            if self.ammo_capacity == self.ammo_per_shot and self.ammo_recharge_time:
+                # Actual rate of fire may be strictly limited by ammo consumption
+                self.rof = min(self.rof, 1 / self.ammo_recharge_time)
+
+            rate = round(self.ammo_per_shot * self.rof, 2)
+            if self.ammo_demand and rate > self.ammo_demand:
+                t = round(self.ammo_capacity / (rate - self.ammo_demand), 2)
+                self.ammo_shots_to_drain = int(self.rof * t)
+                self.ammo_drain_time = round(self.ammo_shots_to_drain / self.rof, 2)
+            elif self.ammo_drain_time:
+                self.ammo_drain_time = 0
+
+            consumption_rate = min(self.ammo_demand,
+                                   round(self.ammo_per_shot * self.rof, 2))
+
+            if self.ammo_source == 'energy':
+                self.energy_rate = - consumption_rate
+                self.energy_per_shot = self.ammo_per_shot
+            elif self.ammo_source == 'metal':
+                self.metal_rate = - consumption_rate
+                self.metal_per_shot = self.ammo_per_shot
+            elif self.ammo_source in ('infinite', 'time', 'factory'):
+                pass
+            else:
+                print('Unhandled ammo source {!r} for {}'.format(self.ammo_source, resource_name))
 
 
         if 'target_layers' in self.raw:
             self.target_layers = [layer[3:] if layer.startswith('WL_') else layer
                                   for layer in self.raw.pop('target_layers', ())]
 
-        if self.raw.pop('self_destruct', False):
+        if (self.raw.pop('self_destruct', False) or
+            self.raw.pop('only_fire_once', False)):
             self.self_destruct = True
 
         if 'yaw_range' in self.raw:
@@ -822,7 +842,6 @@ def load_mods():
             AVAILABLE_MODS[modinfo['identifier']] = modinfo
 
 def load_all():
-    load_mods()
     dbs = {v: VersionDb(v) for v in CONFIG.get('versions', ())}
 
     for db in dbs.values():
@@ -835,6 +854,8 @@ def load_all():
         dbs['current'] = sorted(dbs.items())[-1][1]
 
     return dbs
+
+load_mods()
 
 if __name__ == '__main__':
     dbs = load_all()

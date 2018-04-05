@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8">
     % if defined('title'):
-      <title>PADB - {{title}}</title>
+      <title>EquilibriumDB - {{title}}</title>
     % else:
-      <title>PADB</title>
+      <title>EquilibriumDB</title>
     % end
-    <link rel="stylesheet" href="{{WEB_BASE}}/static/flatly.css">
+    <link rel="stylesheet" href="{{WEB_BASE}}/static/united.css">
     <link rel="stylesheet" href="{{WEB_BASE}}/static/site.css">
+	<link rel="shortcut icon" href="{{WEB_BASE}}/static/favicon.ico" type="image/x-icon">
   </head>
   <body>
     % include nav_bar db=db, WEB_BASE=WEB_BASE, unit=get('unit'), hide_version=get('hide_nav_version')

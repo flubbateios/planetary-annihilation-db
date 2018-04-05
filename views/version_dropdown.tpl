@@ -26,7 +26,7 @@
       <li class="ldots-before"><a>...</a></li>
     % end
     <li class="{{itemClass}}">
-      <a href="{{webunits.update_version(field=field, version=v)}}">{{desc}}</a>
+      <a href="{{WEB_BASE}}{{webunits.update_version(field=field, version=v)}}">{{desc}}</a>
     </li>
     % if (i == iStop and iStop != len(versions)):
       <li class="ldots-after"><a>...</a></li>

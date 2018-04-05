@@ -11,7 +11,7 @@
         </button>
         <ul class="dropdown-menu" role="info">
           % for group in db.unit_groups:
-            <li><a href="{{webunits.update_query('cat{}'.format(i+1), group)}}">
+            <li><a href="{{WEB_BASE}}{{webunits.update_query('cat{}'.format(i+1), group)}}">
               {{db.unit_groups[group][0]}}
             </a></li>
           % end
@@ -24,7 +24,7 @@
         </button>
         <ul class="dropdown-menu" role="info">
           % for ux in db.get_units(db.unit_groups[cat][3]):
-            <li><a href="{{webunits.update_query('u{}'.format(i+1), ux.safename)}}">
+            <li><a href="{{WEB_BASE}}{{webunits.update_query('u{}'.format(i+1), ux.safename)}}">
               {{ux.name}}
             </a></li>
           % end
@@ -35,7 +35,7 @@
         <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
           Build: {{db.description}} <span class="caret"></span>
         </button>
-        % include version_dropdown db=db, field='v{}'.format(i+1)
+        % include version_dropdown db=db, WEB_BASE = WEB_BASE, field='v{}'.format(i+1)
       </div>
 
       % if units.AVAILABLE_MODS:

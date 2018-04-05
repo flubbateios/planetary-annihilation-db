@@ -17,13 +17,17 @@ The code is open source (MIT license) and can be downloaded from
 <a href="https://github.com/speth/planetary-annihilation-db">Github</a>.
 Bug reports and feature requests are welcome and can be submitted to the
 <a href="https://github.com/speth/planetary-annihilation-db/issues">issue tracker</a>
-on Github.</p>
+on Github.
+
+Modified for reverse proxies and Equilibrium.
+</p>
 
 <p>Planetary Annihilation &copy; 2014-2016
 <a href="http://www.uberent.com/">Uber Entertainment</a>.</p>
 
-<p>PADB &copy; 2014-2016 Raymond Speth.</p>
+<p>PADB &copy; 2014-2017 Raymond Speth.</p>
 
+<p>Equilibrium &copy; 2017 N30N</p>
 </div>
 </div>
 </div>
