@@ -176,8 +176,8 @@ def timestr(val):
 
 LOADED_DBS = {}
 AVAILABLE_VERSIONS = collections.OrderedDict(units.DESCRIPTIONS)
-#if 'pa_root' in units.CONFIG:
-#    AVAILABLE_VERSIONS['current'] = 'current'
+if 'pa_root' in units.CONFIG:
+    AVAILABLE_VERSIONS['current'] = 'current'
 LATEST_VERSION = next(reversed(AVAILABLE_VERSIONS))
 DB_COUNTER = 0
 MAX_DBS = units.CONFIG.get('cache_size', 50)
