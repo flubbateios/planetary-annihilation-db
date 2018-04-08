@@ -72,12 +72,12 @@
           % for mod in units.AVAILABLE_MODS.values():
             <li>
               % if mod['identifier'] in db.active_mods:
-                <a href="{{webunits.update_version(remove_mod=mod['identifier'])}}">
+                <a href="{{WEB_BASE}}{{webunits.update_version(remove_mod=mod['identifier'])}}">
                 <b class="glyphicon glyphicon-check"></b>&nbsp;
                 {{mod['display_name']}} {{mod['version']}}
                 </a>
               % else:
-                <a href="{{webunits.update_version(add_mod=mod['identifier'])}}">
+                <a href="{{WEB_BASE}}{{webunits.update_version(add_mod=mod['identifier'])}}">
                 <b class="glyphicon glyphicon-unchecked"></b>&nbsp;
                 {{mod['display_name']}} {{mod['version']}}
                 </a>
