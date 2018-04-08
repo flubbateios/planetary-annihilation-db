@@ -22,12 +22,14 @@ on Github.
 Modified for reverse proxies and Equilibrium.
 </p>
 
-<p>Planetary Annihilation &copy; 2014-2016
+<p>Planetary Annihilation &copy; 2014-2018
 <a href="http://www.uberent.com/">Uber Entertainment</a>.</p>
 
-<p>PADB &copy; 2014-2017 Raymond Speth.</p>
+<p>PADB &copy; 2014 Raymond Speth.</p>
 
 <p>Equilibrium &copy; 2017 N30N</p>
+
+<p>Legion Expansion Assets are licensed under <a href="https://github.com/Legion-Expansion/Legion-Expansion/blob/balance/LICENSE">CC BY-NC-SA 4.0</a></p>
 </div>
 </div>
 </div>
