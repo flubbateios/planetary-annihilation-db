@@ -168,8 +168,9 @@ class VersionDb:
         commanders.sort(key=lambda x: x.name)
 
         # Mark all but the first as 'variants'
-        for commander in commanders[1:]:
-            commander.variant = True
+        for commander in commanders:
+            if commander.name != 'Commandonut Commander':
+                commander.variant = True
 
         # Determine units that can actually be built
         for commander in commanders:
@@ -200,6 +201,10 @@ class VersionDb:
 
         if 'mining_platform' in self.units:
             self.units['mining_platform'].tier = 2
+            
+        if 'land_mine' in self.units:
+            self.units['land_mine'].tier = 1
+            
 
     def report(self):
         print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
